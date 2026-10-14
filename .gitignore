@@ -1,0 +1,31 @@
+# ---------------------------------------------------------------------------
+# NEVER commit real business data or secrets.
+# Everything the bot or the demo writes stays out of git.
+# ---------------------------------------------------------------------------
+
+# your real settings (mailbox, senders, links) - copy config/config.example.json to make it
+config/config.json
+config/*backup*.json
+.env
+
+# raw mails, database workbooks, reference lists, demo output
+data/
+# bot logs, health mails, daily progress
+logs/
+state/
+
+# a .pbix stores a full copy of its data - only a copy refreshed on the demo data may be committed
+*.pbix
+!powerbi/*_DEMO.pbix
+
+# exports of real data
+*.csv
+
+# Python / editor
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.vscode/
+~$*
