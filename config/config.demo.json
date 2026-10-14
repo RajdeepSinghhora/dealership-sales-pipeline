@@ -1,0 +1,93 @@
+{
+  "source_mode": "folder",
+  "send_email": false,
+  "keep_awake": false,
+  "network_wait_minutes": 0,
+  "paths": {
+    "raw": "data/raw",
+    "database": "data/database",
+    "test_inbox": "data/test_inbox",
+    "logs": "logs",
+    "state": "state"
+  },
+  "schedule": {
+    "start_time": "08:30",
+    "cutoff_time": "13:00",
+    "poll_minutes": 30,
+    "sla_ready_by": "13:00",
+    "retry_minutes": 10,
+    "give_up_time": "20:00"
+  },
+  "senders": [],
+  "imap": {
+    "host": "imap.gmail.com",
+    "user": "not-used-in-demo@example.com",
+    "password_env": "GMAIL_APP_PASSWORD",
+    "folder": "INBOX",
+    "lookback_days": 1
+  },
+  "smtp": {
+    "host": "smtp.gmail.com",
+    "port": 465,
+    "user": "not-used-in-demo@example.com",
+    "password_env": "GMAIL_APP_PASSWORD",
+    "to": [
+      "not-used-in-demo@example.com"
+    ]
+  },
+  "extensions": [
+    ".xlsx",
+    ".xlsm"
+  ],
+  "groups": {
+    "PV": {
+      "file_prefix": "PV",
+      "files": [
+        {
+          "name": "pv Bookings- Current Month",
+          "handler": "bookings",
+          "required": true
+        },
+        {
+          "name": "pv 1OPEN GF-PF-YF-ALLT",
+          "handler": "open_pipeline",
+          "required": true
+        },
+        {
+          "name": "pv SSI Report (YTD)",
+          "handler": "ssi",
+          "required": false
+        }
+      ]
+    },
+    "EV": {
+      "file_prefix": "EV",
+      "files": [
+        {
+          "name": "ev Bookings- Current Month",
+          "handler": "bookings",
+          "required": true
+        },
+        {
+          "name": "ev 1OPEN GF-PF-YF-ALLT",
+          "handler": "open_pipeline",
+          "required": true
+        },
+        {
+          "name": "EV - SSI Report (YTD)",
+          "handler": "ssi",
+          "required": false
+        }
+      ]
+    }
+  },
+  "team_map": {
+    "source_file": "data/reference/Team_Mapping.xlsx"
+  },
+  "ssi": {
+    "actual_ca_csv_url": "",
+    "id_list": "data/reference/CA_ID_List.xlsx",
+    "low_score": 930,
+    "target_score": 980
+  }
+}
