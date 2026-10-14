@@ -7,12 +7,17 @@ Both wrote master_bookings.xlsx at the same time and the file was damaged (BadZi
 The bot (and backfill.py) now take a lock on state/bot.lock when they start. A second copy that finds
 the lock taken writes one line ("another copy is already running since ...") and stops without touching
 anything. Windows releases the lock by itself when the first copy ends or crashes - nothing to clean up.
+
+Who holds the lock is written to state/bot.lock.txt, a separate file that is never locked. (Windows refuses
+to read any part of a file that overlaps a locked byte, and Python reads files in 8 KB blocks, so the text
+could not be read back from bot.lock itself - fixed 14 Oct 2026.)
 """
 import os
 from datetime import datetime
 
 LOCK_FILE = "bot.lock"
-LOCK_BYTE = 4096          # the lock sits on this byte; the text in front of it says who holds the lock
+LOCK_BYTE = 4096          # the lock sits on this byte
+INFO_FILE = "bot.lock.txt"   # who holds the lock (never locked, so a second copy can always read it)
 
 
 class AlreadyRunning(Exception):
@@ -22,6 +27,7 @@ class AlreadyRunning(Exception):
 class RunLock:
     def __init__(self, folder, who):
         self.path = os.path.join(folder, LOCK_FILE)
+        self.info = os.path.join(folder, INFO_FILE)
         self.who = who
         self.fd = None
 
@@ -33,9 +39,12 @@ class RunLock:
         except OSError:
             os.close(fd)
             raise AlreadyRunning(self.holder()) from None
-        os.lseek(fd, 0, os.SEEK_SET)
-        os.write(fd, f"{self.who}, process {os.getpid()}, started {datetime.now():%d %b %Y %H:%M}".ljust(200).encode())
         self.fd = fd
+        try:
+            with open(self.info, "w", encoding="utf-8") as fh:
+                fh.write(f"{self.who}, process {os.getpid()}, started {datetime.now():%d %b %Y %H:%M}")
+        except OSError:
+            pass                                   # only the message of a second copy would be less precise
         return self
 
     def release(self):
@@ -49,8 +58,8 @@ class RunLock:
 
     def holder(self):
         try:
-            with open(self.path, "rb") as fh:
-                text = fh.read(200).decode("utf-8", "replace").strip()
+            with open(self.info, encoding="utf-8", errors="replace") as fh:
+                text = fh.read(300).strip()
             return text or "another copy"
         except OSError:
             return "another copy"

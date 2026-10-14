@@ -64,7 +64,7 @@ These were added after real failures.
 | The laptop goes back to sleep mid-run | Asks Windows to stay awake while the bot runs (`keep_awake`) |
 | Task Scheduler starts the bot late | The health mail says how late and why |
 | A workbook is open in Excel / OneDrive / a Power BI refresh | Writes go to a temp file and are swapped in; retries a few times, then reports it |
-| A second copy of the bot starts (a manual run while the scheduled run is still going) | It finds the lock on `state/bot.lock` taken, writes one line ("another copy is already running since …") and stops without touching anything. Windows releases the lock when the first copy ends or crashes |
+| A second copy of the bot starts (a manual run while the scheduled run is still going) | It finds the lock on `state/bot.lock` taken, reads who holds it from `state/bot.lock.txt`, writes one line saying which copy is running and since when, and stops without touching anything. Windows releases the lock when the first copy ends or crashes |
 | A workbook comes out damaged | Every program writes its own temp file (process ID in the name). The file is read back completely before it replaces the workbook, so a damaged file never goes live |
 | A workbook is damaged anyway (disk, power cut) | One dated backup per workbook per day in `data/database/backup/`, kept 30 days. `check_workbooks.py --restore` sets the damaged file aside, puts back the newest good backup, and prints the days to load again |
 | The bot itself crashes | RED mail with the error and the file and line (once per different error) |

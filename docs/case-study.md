@@ -29,7 +29,7 @@ Several problems followed from this:
    - Surveys are kept question by question.
    - A team map runs CA → TL → SM, with history.
    - An operations log records every run.
-3. **An 11-page Power BI report** with one entry page per role: directors, sales managers, team leaders, customer experience, and sales operations. It has 150+ DAX measures and drill-through call lists.
+3. **A 12-page Power BI report** with one entry page per role: directors, sales managers, team leaders, customer experience, and sales operations. It has 150+ DAX measures and drill-through call lists.
 4. **A synthetic replica.** A generator produces fictional reports in the exact CRM layouts, and the unmodified bot replays them at simulated times. This made it possible to test, demo and publish the system without exposing any real data.
 
 ## Problems worth telling
